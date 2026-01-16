@@ -7,7 +7,7 @@ public class CatScript : MonoBehaviour
     public Sprite closedSprite;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-
+    //test
     void ChangeSprite(Sprite newSprite)
     {
         spriteRenderer.sprite = newSprite;
@@ -22,6 +22,7 @@ public class CatScript : MonoBehaviour
     // Update is called once per frame
     void OnMouseOver()
     {
+        Debug.Log("Mouse is over the cat!");
         ChangeSprite(openSprite);
     }
 
