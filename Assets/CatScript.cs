@@ -8,41 +8,80 @@ public class CatScript : MonoBehaviour
     public AudioSource audioSource;
     public float t = 0;
     public AnimationCurve curve;
+    public bool HasCatMeowed = false;
+    private bool isHovering = false;
+    private Vector3 baseScale;
+    private Vector2 baseSpriteSize;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+
+
     void ChangeSprite(Sprite newSprite)
     {
+        Vector2 oldSize = spriteRenderer.bounds.size;
+
         spriteRenderer.sprite = newSprite;
+
+        Vector2 newSize = spriteRenderer.bounds.size;
+
+        Vector3 scale = transform.localScale;
+        scale.x *= oldSize.x / newSize.x;
+        scale.y *= oldSize.y / newSize.y;
+        transform.localScale = scale;
     }
 
 
     void Start()
     {
         spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
+
+        baseScale = transform.localScale;
+        baseSpriteSize = spriteRenderer.bounds.size;
     }
 
     private void Update()
     {
-        t += Time.deltaTime;
-        if (t > 1)
+        if (HasCatMeowed && !audioSource.isPlaying) // If the cat has meowed and the sound is finished, reset the flag
+        {
+            HasCatMeowed = false;
+        }
+
+        if (isHovering)                             // If the mouse is hovering over the cat, animate it
+        {
+            t += Time.deltaTime;
+            if (t > 1)
+            {
+                t = 0;
+            }
+
+        // Animation
+
+            float y = curve.Evaluate(t);
+            transform.localScale = baseScale * (1 + y * 0.3f);
+        }
+        else
         {
             t = 0;
+            transform.localScale = baseScale;
         }
     }
-
-    // Update is called once per frame
-    void OnMouseOver()
+    void OnMouseEnter()
     {
+        isHovering = true;
         ChangeSprite(openSprite);
-        AudioSource.PlayClipAtPoint(audioSource.clip, transform.position);
+        spriteRenderer.color.transparent = false;
 
-        float y = curve.Evaluate(t);
-
-        transform.localScale = new Vector3(1 + y * 0.3f, 1 + y * 0.3f, 1);
+        if (!HasCatMeowed && !audioSource.isPlaying)    // Play the meow sound only if it hasn't meowed yet and the sound is not already playing
+        {
+            audioSource.Play();
+            HasCatMeowed = true;
+        }
     }
 
     void OnMouseExit()
     {
+        isHovering = false;
         ChangeSprite(closedSprite);
     }
+
+
 }
