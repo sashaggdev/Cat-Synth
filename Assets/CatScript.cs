@@ -68,7 +68,7 @@ public class CatScript : MonoBehaviour
     {
         isHovering = true;
         ChangeSprite(openSprite);
-        spriteRenderer.color.transparent = false;
+        //spriteRenderer.color.transparent = false;
 
         if (!HasCatMeowed && !audioSource.isPlaying)    // Play the meow sound only if it hasn't meowed yet and the sound is not already playing
         {
